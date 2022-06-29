@@ -32,22 +32,39 @@ export default {
   name: "checkButton",
   data() {
     return {
-      text: " ",
+      text: "",
       msg: " ",
       info: null,
     };
   },
 
+  mounted() {
+    if (localStorage.getItem("leadhit-site-id")) {
+      this.$router.push("/analytics");
+    }
+  },
+  // watch: {
+  //   text(newText) {
+  //     localStorage.text = newText;
+  //     console.log("localstorage", newText);
+  //   },
+  // },
   methods: {
     axiosInfo() {
       axios
         .get("https://track-api.leadhit.io/client/test_auth", {
           headers: {
             "Api-Key": "5f8475902b0be670555f1bb3:eEZn8u05G3bzRpdL7RiHCvrYAYo",
-            "Leadhit-Site-Id": "5f8475902b0be670555f1bb3",
+            // "Leadhit-Site-Id": "5f8475902b0be670555f1bb3",
+            "Leadhit-Site-Id": this.text,
           },
         })
-        .then((response) => (this.info = response))
+        .then((res) => {
+          if (res.data.message == "ok") {
+            localStorage.setItem("leadhit-site-id", this.text);
+            this.$router.push("/analytics");
+          }
+        })
         .catch((error) => alert(error.message));
     },
     checkButton() {
@@ -117,9 +134,8 @@ export default {
   }
 }
 #info {
-  height: 100px;
-  width: 200px;
-  border: 2px solid black;
+  height: 400px;
+  width: 400px;
   color: black;
 }
 </style>

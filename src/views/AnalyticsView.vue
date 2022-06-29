@@ -1,5 +1,10 @@
 <template>
   <router-view>
+    <div class="icon">
+      <button @click="exitButton">
+        <Icon icon="dashicons:exit" color="black" width="25" height="25" />
+      </button>
+    </div>
     <div class="analytics">
       <h1>Аналитика</h1>
     </div>
@@ -11,11 +16,19 @@
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
+import { Icon } from "@iconify/vue";
 
 am4core.useTheme(am4themes_animated);
 export default {
+  components: {
+    Icon,
+  },
   name: "AmChart",
   mounted() {
+    if (!localStorage.getItem("leadhit-site-id")) {
+      this.$router.push("/");
+    }
+
     let chart = am4core.create("chartdiv", am4charts.XYChart);
     chart.data = [
       { date: "2020-07-01", visits: 213 },
@@ -177,10 +190,31 @@ export default {
       });
     });
   },
+  methods: {
+    exitButton() {
+      console.log("hello");
+      localStorage.setItem("leadhit-site-id", "");
+      this.$router.push("/");
+    },
+  },
 };
 </script>
 
 <style lang="scss">
+.icon {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: flex-end;
+  width: 90%;
+
+  button {
+    outline: none;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+  }
+}
 .analytics {
   color: black;
 
