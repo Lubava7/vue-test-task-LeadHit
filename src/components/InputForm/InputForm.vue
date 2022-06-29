@@ -1,12 +1,14 @@
 <template>
+  <p class="msg">{{ msg }}</p>
   <div class="form">
-    <p>{{ msg }}</p>
     <h1>
       Lead
       <p>Hit</p>
     </h1>
     <div class="form-div" @submit.prevent="">
       <input
+        v-on:keyup.enter="enterText"
+        @click="hideText"
         @input="text = $event.target.value"
         class="input"
         type="text"
@@ -20,30 +22,59 @@
     </div>
   </div>
   <!-- <router-view /> -->
+  <div id="info">{{ info }}</div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "checkButton",
   data() {
     return {
       text: " ",
       msg: " ",
+      info: null,
     };
   },
+
   methods: {
+    axiosInfo() {
+      axios
+        .get("https://track-api.leadhit.io/client/test_auth", {
+          headers: {
+            "Api-Key": "5f8475902b0be670555f1bb3:eEZn8u05G3bzRpdL7RiHCvrYAYo",
+            "Leadhit-Site-Id": "5f8475902b0be670555f1bb3",
+          },
+        })
+        .then((response) => (this.info = response))
+        .catch((error) => alert(error.message));
+    },
     checkButton() {
       if (this.text.length < 24 || this.text.length > 24) {
         this.msg = "id сайта должен содержать 24 символа";
+      }
+      if (this.text.length == 24) {
+        this.msg = " ";
+        this.axiosInfo();
       }
     },
     inputText(event) {
       console.log(event.target.value);
     },
+    hideText() {
+      this.msg = " ";
+    },
+    enterText() {
+      this.checkButton();
+    },
   },
 };
 </script>
 <style lang="scss">
+.msg {
+  height: 20px;
+}
 .form {
   background-color: transparent;
   display: flex;
@@ -84,5 +115,11 @@ export default {
       color: #f1f9fc;
     }
   }
+}
+#info {
+  height: 100px;
+  width: 200px;
+  border: 2px solid black;
+  color: black;
 }
 </style>
